@@ -21,9 +21,9 @@ module.exports = async (req, res) => {
     const response = await drive.files.get({
       fileId: process.env.GOOGLE_DRIVE_FILE_ID,
       alt: 'media',
-    });
+    }, { responseType: 'text' });
 
-    const database = response.data;
+    const database = JSON.parse(response.data);
     const result = database.find(item => item.id_number === aadhar);
 
     if (!result) {
@@ -33,6 +33,6 @@ module.exports = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 };
