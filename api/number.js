@@ -23,11 +23,6 @@ export default async function handler(req, res) {
       alt: 'media',
     });
 
-    // ✅ DEBUG: Response check karo
-    console.log('Response type:', typeof response.data);
-    console.log('Response data:', response.data);
-    
-    // Try different parsing methods
     let database;
     if (typeof response.data === 'string') {
       database = JSON.parse(response.data);
@@ -35,13 +30,16 @@ export default async function handler(req, res) {
       database = response.data;
     }
 
-    console.log('Database type:', typeof database);
-    
-    if (!Array.isArray(database)) {
-      return res.status(500).json({ 
-        error: 'Database format invalid',
-        receivedType: typeof database
-      });
+    // ✅ OBJECT HANDLING
+    if (typeof database === 'object' && !Array.isArray(database)) {
+      // Agar object hai to values array mein convert karo
+      const dataArray = Object.values(database);
+      
+      if (Array.isArray(dataArray)) {
+        database = dataArray;
+      } else {
+        return res.status(500).json({ error: 'Invalid database structure' });
+      }
     }
 
     const result = database.find(item => item.mobile === number);
