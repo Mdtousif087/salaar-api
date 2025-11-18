@@ -1,10 +1,6 @@
 const { google } = require('googleapis');
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+module.exports = async (req, res) => {
   const { aadhar } = req.query;
 
   if (!aadhar) {
@@ -39,4 +35,4 @@ export default async function handler(req, res) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
