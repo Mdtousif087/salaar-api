@@ -18,12 +18,14 @@ module.exports = async (req, res) => {
 
     const drive = google.drive({ version: 'v3', auth });
     
+    // ✅ CORRECTED: File content as text le rahe hain
     const response = await drive.files.get({
       fileId: process.env.GOOGLE_DRIVE_FILE_ID,
       alt: 'media',
-    });
+    }, { responseType: 'text' });
 
-    const database = response.data;
+    // ✅ JSON parse karna padega
+    const database = JSON.parse(response.data);
     const result = database.find(item => item.mobile === number);
 
     if (!result) {
@@ -33,6 +35,6 @@ module.exports = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 };
