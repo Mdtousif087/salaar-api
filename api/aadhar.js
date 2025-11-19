@@ -1,6 +1,6 @@
-const { google } = require('googleapis');
+import { google } from 'googleapis';
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const { aadhar } = req.query;
 
   if (!aadhar) {
@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
       },
       scopes: ['https://www.googleapis.com/auth/drive.readonly'],
     });
@@ -21,18 +21,29 @@ module.exports = async (req, res) => {
     const response = await drive.files.get({
       fileId: process.env.GOOGLE_DRIVE_FILE_ID,
       alt: 'media',
-    }, { responseType: 'text' });
+    });
 
-    const database = JSON.parse(response.data);
-    const result = database.find(item => item.id_number === aadhar);
-
-    if (!result) {
-      return res.status(404).json({ error: 'Aadhar not found' });
+    let database;
+    if (typeof response.data === 'string') {
+      database = JSON.parse(response.data);
+    } else {
+      database = response.data;
     }
 
-    res.status(200).json(result);
+    // ✅ CORRECT DATA ACCESS
+    if (database && database.success && Array.isArray(database.result)) {
+      const result = database.result.find(item => item.id_number === aadhar);
+
+      if (!result) {
+        return res.status(404).json({ error: 'Aadhar not found' });
+      }
+
+      res.status(200).json(result);
+    } else {
+      return res.status(500).json({ error: 'Invalid database format' });
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
-};
+}
