@@ -30,25 +30,18 @@ export default async function handler(req, res) {
       database = response.data;
     }
 
-    // ✅ OBJECT HANDLING
-    if (typeof database === 'object' && !Array.isArray(database)) {
-      // Agar object hai to values array mein convert karo
-      const dataArray = Object.values(database);
-      
-      if (Array.isArray(dataArray)) {
-        database = dataArray;
-      } else {
-        return res.status(500).json({ error: 'Invalid database structure' });
+    // ✅ CORRECT DATA ACCESS
+    if (database && database.success && Array.isArray(database.result)) {
+      const result = database.result.find(item => item.mobile === number);
+
+      if (!result) {
+        return res.status(404).json({ error: 'Number not found' });
       }
+
+      res.status(200).json(result);
+    } else {
+      return res.status(500).json({ error: 'Invalid database format' });
     }
-
-    const result = database.find(item => item.mobile === number);
-
-    if (!result) {
-      return res.status(404).json({ error: 'Number not found' });
-    }
-
-    res.status(200).json(result);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error: ' + error.message });
