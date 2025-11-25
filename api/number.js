@@ -18,30 +18,61 @@ export default async function handler(req, res) {
 
     const drive = google.drive({ version: 'v3', auth });
     
-    const response = await drive.files.get({
-      fileId: process.env.GOOGLE_DRIVE_FILE_ID,
-      alt: 'media',
+    const results = [];
+    const fileIds = [
+      process.env.GOOGLE_DRIVE_FILE_ID_1,  // database1.csv
+      process.env.GOOGLE_DRIVE_FILE_ID_2,  // database2.csv  
+      process.env.GOOGLE_DRIVE_FILE_ID_3   // database.csv
+    ];
+
+    // Teenon files check karo
+    for (const fileId of fileIds) {
+      if (!fileId) continue; // Skip if file ID not set
+      
+      try {
+        const response = await drive.files.get({
+          fileId: fileId,
+          alt: 'media',
+        });
+
+        const csvText = response.data;
+        const lines = csvText.split('\n');
+        const headers = lines[0].split(',').map(h => h.trim());
+        
+        for (let i = 1; i < lines.length; i++) {
+          if (lines[i].trim()) {
+            const values = lines[i].split(',');
+            const record = {};
+            headers.forEach((header, index) => {
+              record[header] = values[index] ? values[index].trim() : '';
+            });
+            
+            // Mobile ya alt number match kare to add karo
+            if (record.mobile === number || record.alt === number) {
+              results.push({
+                ...record,
+                source_file: `database${fileIds.indexOf(fileId) + 1}.csv`
+              });
+            }
+          }
+        }
+      } catch (fileError) {
+        console.error(`Error reading file ${fileId}:`, fileError);
+        // Continue with next file
+      }
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Number not found in any database' });
+    }
+
+    // Response format
+    res.status(200).json({
+      search_number: number,
+      total_results: results.length,
+      results: results
     });
 
-    let database;
-    if (typeof response.data === 'string') {
-      database = JSON.parse(response.data);
-    } else {
-      database = response.data;
-    }
-
-    // ✅ CORRECT DATA ACCESS
-    if (database && database.success && Array.isArray(database.result)) {
-      const result = database.result.find(item => item.mobile === number);
-
-      if (!result) {
-        return res.status(404).json({ error: 'Number not found' });
-      }
-
-      res.status(200).json(result);
-    } else {
-      return res.status(500).json({ error: 'Invalid database format' });
-    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error: ' + error.message });
