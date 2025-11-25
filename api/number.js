@@ -8,6 +8,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('API called with number:', number);
+    
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -18,63 +20,50 @@ export default async function handler(req, res) {
 
     const drive = google.drive({ version: 'v3', auth });
     
-    const results = [];
-    const fileIds = [
-      process.env.GOOGLE_DRIVE_FILE_ID_1,  // database1.csv
-      process.env.GOOGLE_DRIVE_FILE_ID_2,  // database2.csv  
-      process.env.GOOGLE_DRIVE_FILE_ID_3   // database.csv
-    ];
+    console.log('Reading file 1...');
+    const response1 = await drive.files.get({
+      fileId: process.env.GOOGLE_DRIVE_FILE_ID_1,
+      alt: 'media',
+    });
 
-    // Teenon files check karo
-    for (const fileId of fileIds) {
-      if (!fileId) continue; // Skip if file ID not set
-      
-      try {
-        const response = await drive.files.get({
-          fileId: fileId,
-          alt: 'media',
-        });
-
-        const csvText = response.data;
-        const lines = csvText.split('\n');
-        const headers = lines[0].split(',').map(h => h.trim());
-        
-        for (let i = 1; i < lines.length; i++) {
-          if (lines[i].trim()) {
-            const values = lines[i].split(',');
-            const record = {};
-            headers.forEach((header, index) => {
-              record[header] = values[index] ? values[index].trim() : '';
-            });
-            
-            // Mobile ya alt number match kare to add karo
-            if (record.mobile === number || record.alt === number) {
-              results.push({
-                ...record,
-                source_file: `database${fileIds.indexOf(fileId) + 1}.csv`
-              });
-            }
-          }
-        }
-      } catch (fileError) {
-        console.error(`Error reading file ${fileId}:`, fileError);
-        // Continue with next file
-      }
+    console.log('File 1 content received');
+    const csvText = response1.data;
+    console.log('CSV length:', csvText.length);
+    
+    // Simple CSV parsing
+    const lines = csvText.split('\n').filter(line => line.trim());
+    console.log('Total lines:', lines.length);
+    
+    if (lines.length === 0) {
+      return res.status(200).json({ message: 'File is empty', lines: 0 });
     }
 
-    if (results.length === 0) {
-      return res.status(404).json({ error: 'Number not found in any database' });
-    }
+    const headers = lines[0].split(',').map(h => h.trim());
+    console.log('Headers:', headers);
 
-    // Response format
+    // Just return first few lines for testing
+    const sampleData = lines.slice(0, 5).map(line => {
+      const values = line.split(',');
+      const record = {};
+      headers.forEach((header, index) => {
+        record[header] = values[index] ? values[index].trim() : '';
+      });
+      return record;
+    });
+
     res.status(200).json({
+      message: 'API working - sample data',
       search_number: number,
-      total_results: results.length,
-      results: results
+      sample_data: sampleData,
+      total_lines: lines.length
     });
 
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal server error: ' + error.message });
+    console.error('Full error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message,
+      stack: error.stack
+    });
   }
 }
