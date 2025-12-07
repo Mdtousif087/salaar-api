@@ -167,7 +167,7 @@ def perform_lookup_fast(lookup_type, query):
             "success": False,
             "error": "Lookup failed or timeout",
             "response_time": round(time.time() - start_time, 2),
-            "Developer": "Basic Coders | @SajagOG"
+            "Developer": "SALAAR | @osintgroupp"
         }
     
     # Fast processing
@@ -183,7 +183,7 @@ def perform_lookup_fast(lookup_type, query):
                 "type": lookup_type,
                 "results": [],
                 "response_time": round(time.time() - start_time, 2),
-                "Developer": "Basic Coders | @SajagOG"
+                "Developer": "SALAAR | @osintgroupp"
             }
         
         # Process results quickly
@@ -221,8 +221,8 @@ def perform_lookup_fast(lookup_type, query):
             "type": lookup_type,
             "results": processed_results,
             "response_time": round(time.time() - start_time, 2),
-            "credit": data.get("credit", "@DarkTrace_Networks"),
-            "Developer": "Basic Coders | @SajagOG"
+            "credit": data.get("credit", "https://t.me/osintgroupp"),
+            "Developer": "SALAAR | @osintgroupp"
         }
         
     except Exception as e:
@@ -230,7 +230,7 @@ def perform_lookup_fast(lookup_type, query):
             "success": False,
             "error": f"Processing error: {str(e)}",
             "response_time": round(time.time() - start_time, 2),
-            "Developer": "Basic Coders | @SajagOG"
+            "Developer": "SALAAR | @osintgroupp"
         }
 
 # Fast validation functions
@@ -258,7 +258,7 @@ def lookup_num():
             "success": False,
             "error": "Invalid mobile number. Must be 10 digits.",
             "response_time": round(time.time() - start_time, 3),
-            "Developer": "Basic Coders | @SajagOG"
+            "Developer": "SALAAR | @osintgroupp"
         })
     
     result = perform_lookup_fast("mobile", clean_number)
@@ -278,7 +278,7 @@ def lookup_aadhar():
             "success": False,
             "error": "Invalid Aadhaar number. Must be 12 digits.",
             "response_time": round(time.time() - start_time, 3),
-            "Developer": "Basic Coders | @SajagOG"
+            "Developer": "SALAAR | @osintgroupp"
         })
     
     result = perform_lookup_fast("aadhaar", clean_aadhar)
@@ -297,7 +297,7 @@ def bulk_lookup():
                 "success": False,
                 "error": "No JSON data provided",
                 "response_time": round(time.time() - start_time, 3),
-                "Developer": "Basic Coders | @SajagOG"
+                "Developer": "SALAAR | @osintgroupp"
             })
         
         mobiles = data.get("mobiles", [])
@@ -308,7 +308,7 @@ def bulk_lookup():
                 "success": False,
                 "error": "Provide mobiles or aadhars array",
                 "response_time": round(time.time() - start_time, 3),
-                "Developer": "Basic Coders | @SajagOG"
+                "Developer": "SALAAR | @osintgroupp"
             })
         
         results = {}
@@ -337,7 +337,7 @@ def bulk_lookup():
             "success": True,
             "results": results,
             "total_time": round(time.time() - start_time, 3),
-            "Developer": "Basic Coders | @SajagOG"
+            "Developer": "SALAAR | @osintgroupp"
         })
         
     except Exception as e:
@@ -345,7 +345,7 @@ def bulk_lookup():
             "success": False,
             "error": f"Bulk lookup error: {str(e)}",
             "response_time": round(time.time() - start_time, 3),
-            "Developer": "Basic Coders | @SajagOG"
+            "Developer": "SALAAR | @osintgroupp"
         })
 
 @app.route("/status", methods=["GET"])
@@ -368,7 +368,7 @@ def status():
             "Response time tracking",
             "Thread-safe design"
         ],
-        "Developer": "Basic Coders | @SajagOG",
+        "Developer": "SALAAR | @osintgroupp",
         "version": "3.0-FAST"
     })
 
@@ -391,7 +391,7 @@ def index():
             "Vercel optimized",
             "24/7 hosting ready"
         ],
-        "Developer": "Basic Coders | @SajagOG",
+        "Developer": "SALAAR | @osintgroupp",
         "github": "https://github.com/SajagOG"
     })
 
@@ -401,7 +401,7 @@ def not_found(e):
     return jsonify({
         "success": False,
         "error": "Endpoint not found",
-        "Developer": "Basic Coders | @SajagOG"
+        "Developer": "SALAAR | @osintgroupp"
     }), 404
 
 @app.errorhandler(500)
@@ -409,7 +409,7 @@ def server_error(e):
     return jsonify({
         "success": False,
         "error": "Internal server error",
-        "Developer": "Basic Coders | @SajagOG"
+        "Developer": "SALAAR | @osintgroupp"
     }), 500
 
 @app.errorhandler(405)
@@ -417,7 +417,7 @@ def method_not_allowed(e):
     return jsonify({
         "success": False,
         "error": "Method not allowed",
-        "Developer": "Basic Coders | @SajagOG"
+        "Developer": "SALAAR | @osintgroupp"
     }), 405
 
 # Optimize Flask settings for production
