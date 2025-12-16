@@ -58,7 +58,7 @@ def aadhaar_api():
     return jsonify({
         'success': True,
         'data': data,
-        'credit': 'SALAAR | @osintgroupp'
+        'credit': 'SALAAR | @SALAAR08_BOT'
     })
 
 @app.route('/')
@@ -67,7 +67,7 @@ def home():
     <!DOCTYPE html>
 <html>
 <head>
-    <title>CyberXWorm API</title>
+    <title>SALAARTHEBOSS API</title>
     <style>
         body { font-family: Arial; padding: 20px; background: #0f0f0f; color: white; }
         .box { background: #1a1a1a; padding: 20px; margin: 15px 0; border-radius: 10px; border: 1px solid #00ff41; }
@@ -77,8 +77,8 @@ def home():
     </style>
 </head>
 <body>
-    <h1 class="glitch">🔍 CYBERXWORM API</h1>
-    <p>Direct API access to danger-vip-key.shop</p>
+    <h1 class="glitch">🔍 SALAARTHEBOSS API</h1>
+    <p>DM FOR BUY MORE APIS @SALAAR08_BOT</p>
     
     <div class="box">
         <h3>📱 MOBILE LOOKUP</h3>
